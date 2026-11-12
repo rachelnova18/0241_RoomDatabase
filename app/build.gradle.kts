@@ -1,26 +1,23 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.compose.compiler)
-
 }
 
 android {
     namespace = "com.example.pertemuan9"
-    compileSdk = 34
-
+    compileSdk {
+        version = release(37)
+    }
 
     defaultConfig {
         applicationId = "com.example.pertemuan9"
-        minSdk = 27
+        minSdk = 24
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -43,16 +40,6 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
-    //icons
-    implementation(libs.compose.icons)
-    //Room
-    implementation(libs.bundles.room)
-    ksp(libs.room.compiler)
-    //viewModels
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.lifecycle.runtime.compose)
-    //Navigation
-    implementation(libs.navigation.compose)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
@@ -65,4 +52,18 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    //icons
+    implementation(libs.compose.icons)
+
+    //Room
+    implementation(libs.bundles.room)
+    ksp(libs.room.compiler)
+
+    //ViewModel
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.runtime.compose)
+
+    // Navigasi
+    implementation(libs.navigation.compose)
 }
