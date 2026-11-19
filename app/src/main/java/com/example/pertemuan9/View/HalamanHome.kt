@@ -1,5 +1,6 @@
 package com.example.pertemuan9.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,25 +35,20 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pertemuan9.R
 import com.example.pertemuan9.room.Siswa
-import com.example.pertemuan9.uicontroller.DestinasiNavigasi
+import com.example.pertemuan9.uicontroller.DestinasiHome
 import com.example.pertemuan9.uicontroller.SiswaTopAppBar
 import com.example.pertemuan9.viewmodel.HomeViewModel
 import com.example.pertemuan9.viewmodel.PenyediaViewModel
-
-object DestinasiHome : DestinasiNavigasi {
-    override val route = "home"
-    override val titleRes = R.string.app_name
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navigateToItemEntry: () -> Unit,
+    navigateToItemUpdate: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
-){
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -74,10 +70,11 @@ fun HomeScreen(
                 )
             }
         },
-    ){ innerPadding ->
+    ) { innerPadding ->
         val uiStateSiswa by viewModel.homeUiState.collectAsState()
         BodyHome(
             itemSiswa = uiStateSiswa.listSiswa,
+            onSiswaClick = navigateToItemUpdate,
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
@@ -88,12 +85,13 @@ fun HomeScreen(
 @Composable
 fun BodyHome(
     itemSiswa: List<Siswa>,
+    onSiswaClick: (Int) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-    ){
+    ) {
         if (itemSiswa.isEmpty()) {
             Text(
                 text = stringResource(R.string.deskripsi_no_item),
@@ -103,22 +101,24 @@ fun BodyHome(
         } else {
             ListSiswa(
                 itemSiswa = itemSiswa,
+                onSiswaClick = { onSiswaClick(it.id) },
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
             )
         }
     }
-}
-
-@Composable
+}@Composable
 fun ListSiswa(
     itemSiswa: List<Siswa>,
+    onSiswaClick: (Siswa) -> Unit,
     modifier: Modifier = Modifier
-){
-    LazyColumn(modifier = modifier){
-        items(items = itemSiswa, key = { it.id }){ person ->
+) {
+    LazyColumn(modifier = modifier) {
+        items(items = itemSiswa, key = { it.id }) { person ->
             DataSiswa(
                 siswa = person,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_small))
+                    .clickable { onSiswaClick(person) }
             )
         }
     }
@@ -128,26 +128,26 @@ fun ListSiswa(
 fun DataSiswa(
     siswa: Siswa,
     modifier: Modifier = Modifier
-){
+) {
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ){
+    ) {
         Column(
             modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small))
-        ){
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 Text(
                     text = siswa.nama,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.weight(1f))
                 Icon(
                     imageVector = Icons.Default.Phone,
-                    contentDescription = null,
+                    contentDescription = null
                 )
                 Text(
                     text = siswa.telpon,
